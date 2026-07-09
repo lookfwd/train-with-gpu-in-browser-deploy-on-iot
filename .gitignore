@@ -1,0 +1,26 @@
+# Python
+model-builder/.venv/
+__pycache__/
+*.pyc
+
+# Node / Vite
+web/node_modules/
+web/.vite/
+# NOTE: web/dist/ is intentionally committed (deployable static build)
+
+# PlatformIO / ESP-IDF (generated / fetched)
+esp-project/.pio/
+esp-project/managed_components/
+esp-project/sdkconfig
+esp-project/sdkconfig.*
+!esp-project/sdkconfig.defaults
+
+# Secrets / TLS — never commit real credentials or keys
+esp-project/include/secrets.h
+*.pem
+
+# macOS
+.DS_Store
+
+# Claude
+.claude

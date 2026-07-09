@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI on Edges — two-frequency separation</title>
+  <!-- TF.js (+ backends) and mqtt.js are bundled by Vite from npm — see src/app.js. -->
+  <style>
+    :root { color-scheme: dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 18px; background: #0f1216; color: #e6e6e6;
+      font: 14px/1.5 ui-sans-serif, system-ui, sans-serif;
+    }
+    h1 { font-size: 18px; margin: 0 0 2px; }
+    .sub { color: #8a94a0; font-size: 12px; margin-bottom: 14px; }
+    .controls { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+    select, button {
+      background: #1b2028; color: #e6e6e6; border: 1px solid #2c333d; border-radius: 6px;
+      padding: 7px 10px; font: inherit; cursor: pointer;
+    }
+    button.primary { background: #2563eb; border-color: #2563eb; }
+    button:disabled { opacity: 0.5; cursor: default; }
+    .pill { font-size: 12px; color: #8a94a0; }
+    .pill b { color: #cfd6de; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .card { background: #141920; border: 1px solid #212832; border-radius: 8px; padding: 10px; }
+    .card h2 { font-size: 12px; margin: 0 0 6px; color: #9aa4b0; font-weight: 600; text-transform: uppercase; letter-spacing: .04em; }
+    canvas { width: 100%; height: 120px; display: block; background: #0b0e12; border-radius: 6px; }
+    .full { grid-column: 1 / -1; }
+    .info { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-family: ui-monospace, monospace; font-size: 12px; }
+    .info span:nth-child(odd) { color: #8a94a0; }
+    pre#log { background: #0b0e12; border: 1px solid #212832; border-radius: 6px; padding: 8px; height: 120px; overflow: auto; font-size: 11px; color: #9aa4b0; margin: 0; }
+  </style>
+</head>
+<body>
+  <h1>AI on Edges — blind two-frequency separation</h1>
+  <div class="sub">Browser identifies the two tones (FFT), trains a CNN filter bank, ships it to the ESP32-S3, and overlays the device's separation against its own.</div>
+
+  <div class="controls">
+    <label class="pill">Mode
+      <select id="mode">
+        <option value="sim">sim (browser ADC)</option>
+        <option value="live">live (device ADC)</option>
+      </select>
+    </label>
+    <label class="pill">Architecture <select id="arch"></select></label>
+    <label class="pill">Engine <select id="engine"></select></label>
+    <button id="btnTrain" class="primary">Train &amp; deploy</button>
+    <button id="btnReshuffle">Reshuffle frequencies</button>
+    <label class="pill"><input type="checkbox" id="autoRetrain" checked> auto-retrain on drift</label>
+    <label class="pill"><input type="checkbox" id="int8"> int8 quantize</label>
+    <span class="pill">MQTT: <b id="mqttStatus">connecting…</b></span>
+  </div>
+
+  <div class="grid">
+    <div class="card full">
+      <h2>Mixed signal (what the device streams)</h2>
+      <canvas id="cMix" width="1100" height="120"></canvas>
+    </div>
+    <div class="card full">
+      <h2>FFT spectrum &amp; identified peaks (orange)</h2>
+      <canvas id="cSpec" width="1100" height="120"></canvas>
+    </div>
+    <div class="card full">
+      <h2>Component 1 — truth · browser · device</h2>
+      <canvas id="cComp1" width="1100" height="120"></canvas>
+    </div>
+    <div class="card full">
+      <h2>Component 2 — truth · browser · device</h2>
+      <canvas id="cComp2" width="1100" height="120"></canvas>
+    </div>
+    <div class="card">
+      <h2>State</h2>
+      <div class="info">
+        <span>identified</span><span id="infoFreqs">—</span>
+        <span>engine</span><span id="infoEngine">—</span>
+        <span>train times</span><span id="infoTrainTimes">—</span>
+        <span>training</span><span id="infoTrain">—</span>
+        <span>builder</span><span id="infoBuilder">—</span>
+        <span>device</span><span id="infoDevice">—</span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Log</h2>
+      <pre id="log"></pre>
+    </div>
+  </div>
+
+  <script type="module" src="/src/app.js"></script>
+</body>
+</html>

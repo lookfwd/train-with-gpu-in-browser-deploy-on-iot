@@ -1,0 +1,34 @@
+{
+  "comment": "Shared model spec consumed by BOTH the browser (TF.js builder) and the Python model-builder (Keras builder). Keep this the single source of truth for the 3 selectable architectures so the two sides never disagree. All models: input shape [input_len, 1] -> output shape [input_len, channels_out]. Every layer is a 1D convolution with 'same' padding so the output length equals the input length. The final layer MUST have filters == channels_out.",
+  "input_len": 256,
+  "channels_out": 2,
+  "fs_hz": 1024,
+  "architectures": [
+    {
+      "id": "fir1",
+      "name": "FIR-1 - single conv, two learned FIR filters",
+      "layers": [
+        { "type": "conv1d", "filters": 2, "kernel": 65, "dilation": 1, "activation": "linear" }
+      ]
+    },
+    {
+      "id": "cnn3",
+      "name": "CNN-3 - three stacked conv layers (multi-level)",
+      "layers": [
+        { "type": "conv1d", "filters": 8, "kernel": 15, "dilation": 1, "activation": "relu" },
+        { "type": "conv1d", "filters": 8, "kernel": 15, "dilation": 1, "activation": "relu" },
+        { "type": "conv1d", "filters": 2, "kernel": 15, "dilation": 1, "activation": "linear" }
+      ]
+    },
+    {
+      "id": "wide",
+      "name": "Wide-kernel CNN - large receptive field (k=33)",
+      "comment": "Reaches a large receptive field with wide kernels instead of dilation, because TensorFlow.js cannot backprop through dilated convolutions (training happens in the browser).",
+      "layers": [
+        { "type": "conv1d", "filters": 8, "kernel": 33, "dilation": 1, "activation": "relu" },
+        { "type": "conv1d", "filters": 8, "kernel": 33, "dilation": 1, "activation": "relu" },
+        { "type": "conv1d", "filters": 2, "kernel": 33, "dilation": 1, "activation": "linear" }
+      ]
+    }
+  ]
+}

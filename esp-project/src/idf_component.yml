@@ -1,0 +1,4 @@
+## ESP-IDF component-manager dependencies for the main (src) component.
+## PlatformIO fetches these during the build.
+dependencies:
+  espressif/esp-tflite-micro: "*"

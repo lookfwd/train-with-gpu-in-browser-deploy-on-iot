@@ -1,0 +1,6 @@
+# Applied on first build (merged into sdkconfig).
+CONFIG_ESP_MAIN_TASK_STACK_SIZE=8192
+CONFIG_FREERTOS_HZ=1000
+CONFIG_ESP_TASK_WDT_TIMEOUT_S=10
+# esp-tflite-micro builds as C++; keep the default optimization.
+CONFIG_COMPILER_OPTIMIZATION_PERF=y

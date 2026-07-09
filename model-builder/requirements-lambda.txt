@@ -1,0 +1,5 @@
+# Converter-only deps for the Lambda container (no paho/MQTT). tensorflow-cpu keeps the
+# image smaller than full tensorflow; it still ships tf.lite (the TFLiteConverter).
+tensorflow-cpu>=2.16
+tf-keras
+numpy

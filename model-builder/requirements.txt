@@ -1,0 +1,4 @@
+tensorflow>=2.16
+tf-keras          # legacy Keras 2, for reliable tf.lite.TFLiteConverter
+paho-mqtt>=2.0
+numpy
