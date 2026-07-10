@@ -1,0 +1,223 @@
+[
+  {
+    "name": "pass_tiny16",
+    "file": "/private/tmp/claude-501/-Users-lookfwd-Desktop-quick-test-apps-ai-on-edges-demo/a204b45b-d2d1-43c6-a98f-db7cc8d975f2/scratchpad/bench/pass_tiny16.tflite",
+    "quantize": false,
+    "macs": 0,
+    "note": "16->16 reshape: true floor, no shim",
+    "tflite_bytes": 932,
+    "n_ops": 1,
+    "ops": [
+      "RESHAPE"
+    ],
+    "load_us": 1147,
+    "arena_bytes": 456,
+    "invoke": {
+      "n": 40,
+      "med": 96,
+      "min": 96,
+      "p10": 96,
+      "p90": 104
+    }
+  },
+  {
+    "name": "slice_256in",
+    "file": "/private/tmp/claude-501/-Users-lookfwd-Desktop-quick-test-apps-ai-on-edges-demo/a204b45b-d2d1-43c6-a98f-db7cc8d975f2/scratchpad/bench/slice_256in.tflite",
+    "quantize": false,
+    "macs": 0,
+    "note": "256 fed in, 16 out: input-size independence",
+    "tflite_bytes": 1660,
+    "n_ops": 3,
+    "ops": [
+      "RESHAPE",
+      "STRIDED_SLICE",
+      "RESHAPE"
+    ],
+    "load_us": 1221,
+    "arena_bytes": 2680,
+    "invoke": {
+      "n": 40,
+      "med": 482,
+      "min": 279,
+      "p10": 279,
+      "p90": 495
+    }
+  },
+  {
+    "name": "fc16_float",
+    "file": "/private/tmp/claude-501/-Users-lookfwd-Desktop-quick-test-apps-ai-on-edges-demo/a204b45b-d2d1-43c6-a98f-db7cc8d975f2/scratchpad/bench/fc16_float.tflite",
+    "quantize": false,
+    "macs": 256,
+    "note": "one 16->16 FC, float",
+    "tflite_bytes": 2428,
+    "n_ops": 3,
+    "ops": [
+      "RESHAPE",
+      "FULLY_CONNECTED",
+      "RESHAPE"
+    ],
+    "load_us": 1235,
+    "arena_bytes": 680,
+    "invoke": {
+      "n": 41,
+      "med": 169,
+      "min": 169,
+      "p10": 169,
+      "p90": 373
+    }
+  },
+  {
+    "name": "fc16_int8",
+    "file": "/private/tmp/claude-501/-Users-lookfwd-Desktop-quick-test-apps-ai-on-edges-demo/a204b45b-d2d1-43c6-a98f-db7cc8d975f2/scratchpad/bench/fc16_int8.tflite",
+    "quantize": true,
+    "macs": 256,
+    "note": "one 16->16 FC, int8 (boundary cost)",
+    "tflite_bytes": 2320,
+    "n_ops": 5,
+    "ops": [
+      "QUANTIZE",
+      "RESHAPE",
+      "FULLY_CONNECTED",
+      "RESHAPE",
+      "DEQUANTIZE"
+    ],
+    "load_us": 1422,
+    "arena_bytes": 920,
+    "invoke": {
+      "n": 40,
+      "med": 506,
+      "min": 298,
+      "p10": 298,
+      "p90": 515
+    }
+  },
+  {
+    "name": "eeg_native",
+    "file": "/private/tmp/claude-501/-Users-lookfwd-Desktop-quick-test-apps-ai-on-edges-demo/a204b45b-d2d1-43c6-a98f-db7cc8d975f2/scratchpad/bench/eeg_native.tflite",
+    "quantize": false,
+    "macs": 640,
+    "note": "REAL EEG, native 128->16, NO pad (float)",
+    "tflite_bytes": 4676,
+    "n_ops": 5,
+    "ops": [
+      "RESHAPE",
+      "DEPTHWISE_CONV_2D",
+      "FULLY_CONNECTED",
+      "FULLY_CONNECTED",
+      "RESHAPE"
+    ],
+    "load_us": 1418,
+    "arena_bytes": 1992,
+    "invoke": {
+      "n": 40,
+      "med": 535,
+      "min": 333,
+      "p10": 334,
+      "p90": 574
+    }
+  },
+  {
+    "name": "eeg_nat_int8",
+    "file": "/private/tmp/claude-501/-Users-lookfwd-Desktop-quick-test-apps-ai-on-edges-demo/a204b45b-d2d1-43c6-a98f-db7cc8d975f2/scratchpad/bench/eeg_nat_int8.tflite",
+    "quantize": true,
+    "macs": 640,
+    "note": "REAL EEG, native 128->16, NO pad (int8)",
+    "tflite_bytes": 4184,
+    "n_ops": 7,
+    "ops": [
+      "QUANTIZE",
+      "RESHAPE",
+      "DEPTHWISE_CONV_2D",
+      "FULLY_CONNECTED",
+      "FULLY_CONNECTED",
+      "RESHAPE",
+      "DEQUANTIZE"
+    ],
+    "load_us": 2109,
+    "arena_bytes": 2168,
+    "invoke": {
+      "n": 40,
+      "med": 809,
+      "min": 603,
+      "p10": 799,
+      "p90": 847
+    }
+  },
+  {
+    "name": "passthrough",
+    "file": "/private/tmp/claude-501/-Users-lookfwd-Desktop-quick-test-apps-ai-on-edges-demo/a204b45b-d2d1-43c6-a98f-db7cc8d975f2/scratchpad/bench/passthrough.tflite",
+    "quantize": false,
+    "macs": 0,
+    "note": "no matmul -> pure per-Invoke floor",
+    "tflite_bytes": 1420,
+    "n_ops": 3,
+    "ops": [
+      "RESHAPE",
+      "PAD",
+      "RESHAPE"
+    ],
+    "load_us": 1222,
+    "arena_bytes": 4648,
+    "invoke": {
+      "n": 40,
+      "med": 440,
+      "min": 238,
+      "p10": 239,
+      "p90": 449
+    }
+  },
+  {
+    "name": "eeg_float",
+    "file": "/private/tmp/claude-501/-Users-lookfwd-Desktop-quick-test-apps-ai-on-edges-demo/a204b45b-d2d1-43c6-a98f-db7cc8d975f2/scratchpad/bench/eeg_float.tflite",
+    "quantize": false,
+    "macs": 784,
+    "note": "REAL EEG pipeline (float)",
+    "tflite_bytes": 5460,
+    "n_ops": 6,
+    "ops": [
+      "RESHAPE",
+      "DEPTHWISE_CONV_2D",
+      "FULLY_CONNECTED",
+      "FULLY_CONNECTED",
+      "PAD",
+      "RESHAPE"
+    ],
+    "load_us": 1505,
+    "arena_bytes": 5176,
+    "invoke": {
+      "n": 41,
+      "med": 660,
+      "min": 456,
+      "p10": 456,
+      "p90": 667
+    }
+  },
+  {
+    "name": "eeg_int8",
+    "file": "/private/tmp/claude-501/-Users-lookfwd-Desktop-quick-test-apps-ai-on-edges-demo/a204b45b-d2d1-43c6-a98f-db7cc8d975f2/scratchpad/bench/eeg_int8.tflite",
+    "quantize": true,
+    "macs": 784,
+    "note": "REAL EEG pipeline (int8+ESP-NN)",
+    "tflite_bytes": 4608,
+    "n_ops": 8,
+    "ops": [
+      "QUANTIZE",
+      "RESHAPE",
+      "DEPTHWISE_CONV_2D",
+      "FULLY_CONNECTED",
+      "FULLY_CONNECTED",
+      "PAD",
+      "RESHAPE",
+      "DEQUANTIZE"
+    ],
+    "load_us": 2231,
+    "arena_bytes": 4056,
+    "invoke": {
+      "n": 40,
+      "med": 1290,
+      "min": 1086,
+      "p10": 1286,
+      "p90": 1322
+    }
+  }
+]

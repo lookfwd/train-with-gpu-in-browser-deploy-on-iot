@@ -3,6 +3,9 @@ model-builder/.venv/
 __pycache__/
 *.pyc
 
+# Benchmark artifacts (generated .tflite + manifest; bench.py and bench-results.json are tracked)
+model-builder/bench/
+
 # Node / Vite
 web/node_modules/
 web/.vite/

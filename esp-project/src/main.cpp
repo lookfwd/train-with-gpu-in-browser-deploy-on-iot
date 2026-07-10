@@ -198,12 +198,20 @@ static void pipeline_task(void *) {
     xSemaphoreTake(g_model_mtx, portMAX_DELAY);
     if (g_interp) {
       TfLiteTensor *in = g_interp->input(0);
-      memcpy(in->data.f, x, N * sizeof(float));
+      // Size-aware I/O: fill only what the model's float input actually holds (clamped to N),
+      // so models with native I/O smaller than N don't overflow the arena. This lets the bench
+      // push shim-free models (e.g. 128-in/16-out) instead of padding everything to 256/512.
+      size_t in_n = (in->type == kTfLiteFloat32) ? in->bytes / sizeof(float) : 0;
+      size_t cpy = in_n < (size_t)N ? in_n : (size_t)N;
+      memcpy(in->data.f, x, cpy * sizeof(float));
       int64_t t0 = esp_timer_get_time();
       if (g_interp->Invoke() == kTfLiteOk) {
         invoke_us = esp_timer_get_time() - t0;
-        TfLiteTensor *out = g_interp->output(0); // [1, N, 2] interleaved
-        for (int i = 0; i < N; i++) { y0[i] = out->data.f[i * 2]; y1[i] = out->data.f[i * 2 + 1]; }
+        TfLiteTensor *out = g_interp->output(0); // [1, M, 2] interleaved, M <= N
+        size_t out_n = (out->type == kTfLiteFloat32) ? out->bytes / sizeof(float) : 0;
+        int pairs = (int)(out_n / 2); if (pairs > N) pairs = N;
+        for (int i = 0; i < pairs; i++) { y0[i] = out->data.f[i * 2]; y1[i] = out->data.f[i * 2 + 1]; }
+        for (int i = pairs; i < N; i++) { y0[i] = 0.0f; y1[i] = 0.0f; }
         did = true;
       }
     }
