@@ -9,6 +9,8 @@ that is the sum of two sinusoids plus noise. The browser must figure out the two
 own, train a small convolutional filter bank to separate them, and deploy that network to the
 ESP32-S3, which then separates the live signal on-device and reports exactly how fast it does so.
 
+[![AI Training and Inference at the Edge: WebGPU, TensorFlow.js, & ESP32-S3](https://img.youtube.com/vi/r_2JWi05fBw/0.jpg)](https://www.youtube.com/watch?v=r_2JWi05fBw)
+
 ---
 
 ## What it actually demonstrates
